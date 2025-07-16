@@ -312,9 +312,15 @@ DROP VIEW global_Vaccinations;
 CREATE VIEW global_Vaccinations AS 
 	SELECT 
 		C.continent AS Continent,C.location AS Location,C.report_date AS ReportDate,C.population AS Population,
-        C.new_cases,C.total_cases,C.new_deaths,C.total_deaths,V.new_vaccinations,
+        C.new_cases,C.total_cases,
+        ROUND((C.total_cases/C.Population)*100,1) AS TotalCases_PctOfPop,
+        C.new_deaths,C.total_deaths,
+        ROUND((C.total_deaths/C.Population)*100,1) AS TotalDeaths_PctOfPop,
+        V.new_vaccinations,
         SUM(V.new_vaccinations) OVER(PARTiTION BY C.location ORDER BY C.location,C.report_date) AS RollingNewVac,
-        V.total_vaccinations
+        V.total_vaccinations,
+        ROUND((V.total_vaccinations/C.total_cases)*100,1) AS TotalVaccinations_PctOfTotalCases,
+        ROUND((V.total_vaccinations/C.Population)*100,1) AS TotalVaccinations_PctOfPop
 	FROM
 		covid_deathsclone AS C
 	JOIN 
@@ -323,7 +329,7 @@ CREATE VIEW global_Vaccinations AS
 		C.location = V.location AND C.report_date = V.report_date;
 SELECT DISTINCT * 
 FROM global_Vaccinations
-WHERE new_vaccinations is not null
+WHERE new_vaccinations is not null 
 ORDER BY location,ReportDate ASC;
 
 -- Covid Vaccinations Trends by Continent and year
