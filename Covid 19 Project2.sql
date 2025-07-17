@@ -13,7 +13,8 @@ SELECT * FROM vacuptake;
 DROP VIEW daily_covid_data;
 CREATE VIEW daily_covid_data AS
 	SELECT
-		date(date_reported) AS Report_Date,country_code,country,new_cases,cumulative_cases,new_deaths,cumulative_deaths
+		WHO_region,country_code,country,date(date_reported) AS Report_Date,year(Date_reported) AS Year,month(Date_reported) AS Month,
+        New_cases,Cumulative_cases,new_deaths,cumulative_deaths
 	FROM
 		dailydata;
 SELECT * FROM daily_covid_data;
